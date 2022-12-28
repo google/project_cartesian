@@ -1,0 +1,25 @@
+{
+  "gcp_project_id": "",
+  "gcp_project_number": "",
+  "gcp_project_region": "us-central1",
+  "mc_id":"",
+  "bigquery_dataset" : "",
+  "mc_datatransfer_table": "",
+  "mc_fields" : ["title","description","offer_id","price","link","image_link"],
+  "reporting_id_column": "offer_id",
+  "administrator_email" : "",
+  "service_account_credentials_path": "service_credentials.json",
+
+  "table_name_prefix": "",
+  "cloud_run_service": "projectcartesian",
+  "service_account_name": "cartesian-service-account",
+  "output_google_sheet_name": "CartesianDCOFeed",
+
+  "bucket_name": "",
+  "amount_of_rows_to_condense": 3,
+  "additional_columns":{},
+  "attribute_filters":{
+      "custom_labels.label_1": ["376"],
+      "availability":["in stock"]
+  }
+}
