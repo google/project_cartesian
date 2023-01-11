@@ -1,4 +1,4 @@
-## README Project Cartesian
+# Project Cartesian
 
 ## Overview
 
@@ -6,79 +6,77 @@ Project Cartesian is a tool that builds a feed for Dynamic Creatives on Studio, 
 
 ## Set up
 
-Create a GCP Project or use an existing one.
+- Create a GCP Project or use an existing one.
 
-Download the git repo.
+- Download the git repo.
 
-Open Cloud Shell
+- Open Cloud Shell
+  ```bash
+  git clone https://github.com/googlestaging/project_cartesian
+  ```
 
-git clone https://github.com/googlestaging/project_cartesian
+- cd into the newly-downloaded folder.
 
-cd into the newly-downloaded folder.
+- Set-up your config variables
 
-Set-up your config variables
+- Open file `config.json` in an editor (either the Cloud shell editor, or any of the command-line editors such as vim or nano)
 
-Open file config.json in an editor (either the Cloud shell editor, or any of the command-line editors such as vim or nano)
+- Fill in required parameters, see section on config variables for more information.
 
-Fill in required parameters, see section on config variables for more information.
+- Run the setup script
+  ```bash
+  ./setup.sh
+  ```
+  During the setup you may be asked to confirm certain operations by typing `Y`.
 
-Run the setup script
+- Enable Merchant Center Data Transfer
 
-./setup.sh
+- Verify that you have completed all actions required to enable the `BigQuery Data Transfer Service`.
 
-During the setup you may be asked to confirm certain operations by typing “Y”.
+- Create a BigQuery dataset to store the Google Merchant Center data.
 
-Enable Merchant Center Data Transfer
+- Configure the required permissions.
 
-Verify that you have completed all actions required to enable the BigQuery Data Transfer Service.
+- Set up the Data Transfer 
 
-Create a BigQuery dataset to store the Google Merchant Center data.
+- Download the Service Account authentication JSON and configure the project to use it
 
-Configure the required permissions.
+- Open the Cloud Console, select your Cartesian Project
 
-Set up the Data Transfer 
+- Open the `Service Accounts IAM page` (selecting IAM in the left side menu or by searching “Service Accounts” in the search bar).
 
-Download the Service Account authentication JSON and configure the project to use it
+- Find the row with the service account, click on it.
 
-Open the Cloud Console, select your Cartesian Project
+- Select the `Keys` top menu. If no keys exist, click on `Add Key` > `Create new key` > `JSON`.
 
-Open the Service Accounts IAM page (selecting IAM in the left side menu or by searching “Service Accounts” in the search bar).
+- Download the JSON file with the keys
 
-Find the row with the service account, click on it.
+- Upload the JSON to the directory where Cartesian project was downloaded (one way of doing this is opening the Cloud Shell Editor > Right click on the folder with the code > upload file)
 
-Select the “Keys” top menu.
+- Update the `config.json` adding the name of the JSON file in the `service_account_credentials` variable.
 
-If no keys exist, click on Add Key > Create new key > JSON.
+- Create a Google Sheet for the Studio Feed. Name the sheet with simple characters, no spaces, numbers or symbols (it must match the value you put in the `config.json` for field `output_google_sheet_name`).
 
-Download the JSON file with the keys
+- Share this document with *editor* role with the service account previously created (if you left the defaults, this service account will be `cartesian-service-account@PROJECT-ID.iam.gserviceaccount.com`)
+> Optional: Create the Google Sheets proxy for the `config.json` modified above.
 
-Upload the JSON to the directory where Cartesian project was downloaded (one way of doing this is opening the Cloud Shell Editor > Right click on the folder with the code > upload file)
+- Create a copy of this document.
 
-Update the config.json adding the name of the JSON file in the “service_account_credentials” variable.
+- Rename the sheet with simple characters, no spaces, numbers or symbols. 
 
-Create a Google Sheet for the Studio Feed.
+- Share it with the service account with the *editor* role.
 
-Name the sheet with simple characters, no spaces, numbers or symbols (it must match the value you put in the config.json for field output_google_sheet_name).
-
-Share this document with “editor” role with the service account previously created (if you left the defaults, this service account will be “cartesian-service-account@PROJECT-ID.iam.gserviceaccount.com)
-
-(Optional) Create the Google Sheets proxy for the config.json modified in step 4.
-
-Create a copy of this document.
-
-Rename the sheet with simple characters, no spaces, numbers or symbols. 
-
-Share it with the service account with the “editor”role.
-
-Copy the values you’ve input in the config.json in step 4.
+- Copy the values you’ve input in the `config.json`.
 
 
 ## Execution
 
-As part of the setup script, Cartesian can create a cloud scheduler that automatically runs this process either daily, weekly or monthly (depending on the configured parameters), so no execution steps are required unless the value “none” is entered in the configuration parameter “auto_run_schedule”. As part of the execution, the most recent Merchant Center data is used to create the feed and write it into the Google Sheet configured for the output. Subsequent executions will update the google sheet.
+As part of the setup script, Cartesian can create a cloud scheduler that automatically runs this process either *daily*, *weekly* or *monthly* (depending on the configured parameters), so no execution steps are required unless the value `none` is entered in the configuration parameter `auto_run_schedule`. As part of the execution, the most recent Merchant Center data is used to create the feed and write it into the Google Sheet configured for the output. Subsequent executions will update the google sheet.  
 
 You can manually call the Cloud Run endpoint to execute the processes. You can obtain the Cloud Run URL from the Cloud Console (type Cloud Run into the search bar). From any terminal, you can call this command for it to execute using the credentials of the person who’s executing the command:
+```bash
 curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" "https://CLOUD_RUN_URL/execute"
+```
 
-Optionally, you can set up another Cloud Scheduler to update the configuration file. If you often change configuration parameters, make sure you create a copy of the configuration Google Sheet (in setup step 9). Log into the Cloud Console and configure a second Cloud Scheduler to run before the one that’s already configured, using the following URL: https://CLOUD_RUN_ENDPOINT/updateConfig?sheet_name=NAME_OF_THE_CONFIG_GOOGLE_SHEET. Make sure you replace the Cloud Run endpoint and the name of the Configuration Sheet, from the setup step 9.
+Optionally, you can set up another Cloud Scheduler to update the configuration file. If you often change configuration parameters, make sure you create a copy of the configuration Google Sheet (in setup steps above). Log into the Cloud Console and configure a second Cloud Scheduler to run before the one that’s already configured, using the following URL: `https://CLOUD_RUN_ENDPOINT/updateConfig?sheet_name=NAME_OF_THE_CONFIG_GOOGLE_SHEET`. Make sure you replace the Cloud Run endpoint and the name of the Configuration Sheet as obtained from the setup steps above.  
 
