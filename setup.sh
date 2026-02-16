@@ -43,7 +43,7 @@ gcloud projects add-iam-policy-binding $gcp_project_id \
 if ! [ -z "$bucket_name" ]
 then
     echo "Creating Cloud Storage Bucket..."
-    gsutil mb -p $gcp_project_id -l $gcp_project_region -b on gs://$bucket_name
+    gcloud storage buckets create gs://$bucket_name --project=$gcp_project_id --location=$gcp_project_region --uniform-bucket-level-access
 fi
 
 
